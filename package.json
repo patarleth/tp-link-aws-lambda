@@ -1,8 +1,8 @@
 {
   "name": "iot-button",
   "version": "1.0.0",
-  "description": "aws iot button to tdlink switch lambda function",
-  "main": "toggle.js",
+  "description": "aws iot button to tplink switch lambda function",
+  "main": "index.js",
   "dependencies": {
     "rsvp": "^3.4.0"
   },
@@ -10,6 +10,5 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "arleth",
-  "license": "ISC"
+  "author": "arleth"
 }
