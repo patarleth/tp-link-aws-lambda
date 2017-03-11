@@ -41,25 +41,29 @@ var makeTPLinkPOSTPromise = function( token, deviceId, systemReqString ) {
     return postPromise;
 }
 
-var tokenStr = process.env.TP_TOKEN;
-var deviceIdStr = process.env.TP_DEVICE_ID;
+exports.handler = (event, context, callback) => {
+    var tokenStr = process.env.TP_TOKEN;
+    var deviceIdStr = process.env.TP_DEVICE_ID;
 
-var statusRequestData = '{"system":{"get_sysinfo":null},"emeter":{"get_realtime":null}}'
-makeTPLinkPOSTPromise( tokenStr, deviceIdStr, statusRequestData ).then(function(chunk) {
-    var myRegexp = /.*relay_state..:([0-9]+).*/g;
-    var match = myRegexp.exec(chunk);
-    var relayState=parseInt(match[1]);
-    if( relayState == 0 ) {
-        console.log('turning light on');
-        var onRequestData = '{"system":{"set_relay_state":{"state": 1}}}';
-        return makeTPLinkPOSTPromise( tokenStr, deviceIdStr, onRequestData);
-    } else {
-        console.log('turning light off');
-        var onRequestData = '{"system":{"set_relay_state":{"state": 0}}}';
-        return makeTPLinkPOSTPromise( tokenStr, deviceIdStr, onRequestData);
-    }
-}).then(function(setStatusResponse) {
-    console.log(setStatusResponse);
-}).catch(function(err) {
-    console.log(err);
-});
+    console.log('Received event:', event);
+
+    var statusRequestData = '{"system":{"get_sysinfo":null},"emeter":{"get_realtime":null}}'
+    makeTPLinkPOSTPromise( tokenStr, deviceIdStr, statusRequestData ).then(function(chunk) {
+        var myRegexp = /.*relay_state..:([0-9]+).*/g;
+        var match = myRegexp.exec(chunk);
+        var relayState=parseInt(match[1]);
+        if( relayState == 0 ) {
+            console.log('turning light on');
+            var onRequestData = '{"system":{"set_relay_state":{"state": 1}}}';
+            return makeTPLinkPOSTPromise( tokenStr, deviceIdStr, onRequestData);
+        } else {
+            console.log('turning light off');
+            var onRequestData = '{"system":{"set_relay_state":{"state": 0}}}';
+            return makeTPLinkPOSTPromise( tokenStr, deviceIdStr, onRequestData);
+        }
+    }).then(function(setStatusResponse) {
+        console.log(setStatusResponse);
+    }).catch(function(err) {
+        console.log(err);
+    });
+};
